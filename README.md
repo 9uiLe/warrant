@@ -245,6 +245,21 @@ spec:
 | `E-CHECK-ORPHAN` | `@warrant-enforces <ID>` タグの ID がルール登録されていない |
 | `E-CHECK-OUTOFSCOPE` | チェックの `governs` がルールの `scope` 外のファイルを裁いている（越境司法） |
 
+## 承認の二重化(ブランチ保護)
+
+`ratify` サブコマンド（ローカルでの承認 = content_hash 更新）は「ファイルを手元で確認した」という記録にとどまり、「第二の人間が実際にレビューした」ことを担保しない。
+
+`.github/CODEOWNERS` により `/.warrant/`・`/docs/spec/`・`/.github/` の変更には `@9uiLe`（リポジトリオーナー）のレビューが必須化されている。
+
+ただし CODEOWNERS はブランチ保護と組み合わせて初めて機能する。ブランチ保護はリポジトリ管理者が GitHub の設定画面でサーバ側に設定する手動作業であり、このリポジトリのコードには含められない。以下の項目を設定すること。
+
+- (a) `master` への直接 push を禁止し、PR 経由を必須化する
+- (b) マージ前に PR レビュー承認を必須化する
+- (c) "Require review from Code Owners" を有効化する
+- (d) 必須ステータスチェックに `warrant check` を実行する CI を指定する（任意・推奨）
+
+これにより、`ratify`（ローカルの承認 = content_hash 更新）と CODEOWNERS + ブランチ保護（第二の人間によるレビュー）で承認ループが閉じる。
+
 ## セマンティックチェック (advisory)
 
 `warrant advise` は LLM などの外部 Judge コマンドを使って `kind: semantic` ルールに対するセマンティック評価を行う。決定論的ゲート（`warrant check`）とは完全に分離されており、advise の結果が CI を落とすことはない。
