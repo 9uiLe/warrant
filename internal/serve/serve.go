@@ -14,6 +14,12 @@ import (
 
 // Start は 127.0.0.1 に限定した読み取り専用 HTTP サーバを起動する
 func Start(addr, root string, reg *registry.Registry, cfg *config.Config) error {
+	return http.ListenAndServe(addr, Handler(root, reg, cfg))
+}
+
+// Handler は serve が公開する読み取り専用ルーティングを構築する。
+// GET 以外は 405 を返し、状態を変更する経路を持たない。
+func Handler(root string, reg *registry.Registry, cfg *config.Config) http.Handler {
 	mux := http.NewServeMux()
 
 	// GET / → index.html (go:embed)
@@ -55,5 +61,5 @@ func Start(addr, root string, reg *registry.Registry, cfg *config.Config) error 
 		w.Write(buf.Bytes())
 	})
 
-	return http.ListenAndServe(addr, mux)
+	return mux
 }
