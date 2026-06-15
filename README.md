@@ -51,8 +51,6 @@ warrant init      # 利用したいプロジェクトの root で実行
 go install github.com/9uiLe/warrant@latest
 ```
 
-バージョンタグ（`vX.Y.Z`）を発行していない間は `@latest` が `master` の最新コミット（擬似バージョン）を指す。安定版を配布する場合はタグを発行すること。
-
 private の間に `go install` する場合は、モジュールプロキシを迂回して SSH で直接取得する設定が必要:
 
 ```sh
@@ -93,16 +91,7 @@ warrant report               # .warrant/traceability.generated.md を生成
 warrant serve                # http://127.0.0.1:7777 で可視化（読み取り専用）
 ```
 
-## .warrant/ ディレクトリレイアウト
-
-```
-.warrant/
-├── config.yaml          # ツール設定（省略時は既定値を使用）
-├── registry.yaml        # 要件レジストリ（SSOT）
-└── traceability.generated.md  # report サブコマンドが生成するトレーサビリティマトリクス（派生物）
-```
-
-`traceability.generated.md` は派生物であるため、`config.yaml` の `derived_globs` に登録しておくこと。これにより誤って `spec.doc` に指定した場合に `E-SPEC-DERIVED` で検出される。
+## 設定ファイルの例
 
 ### config.yaml の例
 
@@ -205,22 +194,6 @@ warrant advise --rules path/to/rules.yaml
 ```
 
 Judge コマンドは `config.yaml` の `semantic_command` で指定する。未設定の場合はスキップして正常終了する。
-
-## SSOT / 派生分離の不変条件
-
-`spec.doc` には必ず一次情報ソース（人間が書いた仕様書）を指定しなければならない。生成物・ビルド成果物・ツールが出力したファイルを指定してはならない。
-
-`config.yaml` の `derived_globs` に派生データのパターンを列挙しておくと、誤って `spec.doc` に指定した場合に `E-SPEC-DERIVED` で CI が落ちる。
-
-```yaml
-# 悪い例: warrant report が生成したファイルを spec.doc に指定している
-spec:
-  doc: .warrant/traceability.generated.md  # → E-SPEC-DERIVED で FAIL
-
-# 良い例: 人間が書いた仕様書を指定している
-spec:
-  doc: docs/spec/auth.md
-```
 
 ## 違反コード一覧
 
