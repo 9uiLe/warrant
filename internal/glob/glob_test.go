@@ -68,6 +68,40 @@ func TestGlob(t *testing.T) {
 			pattern: "**/*.go",
 			want:    []string{"a/b/c.go"},
 		},
+		{
+			name: "trailing ** matches all files recursively",
+			files: []string{
+				"internal/serve/serve.go",
+				"internal/serve/sub/web.go",
+				"internal/serve/serve_test.go",
+				"other/x.go",
+			},
+			pattern: "internal/serve/**",
+			want: []string{
+				"internal/serve/serve.go",
+				"internal/serve/serve_test.go",
+				"internal/serve/sub/web.go",
+			},
+		},
+		{
+			name: "trailing ** excludes leading-dot entries",
+			files: []string{
+				"pkg/a.go",
+				"pkg/.hidden/secret.go",
+				"pkg/.dotfile",
+			},
+			pattern: "pkg/**",
+			want:    []string{"pkg/a.go"},
+		},
+		{
+			name: "bare ** matches every file from root",
+			files: []string{
+				"a.go",
+				"sub/b.go",
+			},
+			pattern: "**",
+			want:    []string{"a.go", "sub/b.go"},
+		},
 	}
 
 	for _, tt := range tests {

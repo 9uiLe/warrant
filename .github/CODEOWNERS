@@ -1,0 +1,5 @@
+# 承認の二重化(PR #4 残課題1): SSOT/仕様/統治設定の変更はオーナーのレビューを必須にする。
+# content_hash のローカル更新だけでは人間レビューを担保できないため。
+/.warrant/ @9uiLe
+/docs/spec/ @9uiLe
+/.github/ @9uiLe

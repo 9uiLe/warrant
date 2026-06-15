@@ -93,7 +93,33 @@ func matchParts(root, current string, parts []string, results *[]string) error {
 	rest := parts[1:]
 
 	if part == "**" {
-		// ** は 0 個以上のディレクトリにマッチ
+		if len(rest) == 0 {
+			// 末尾セグメントが ** のとき: 現在ディレクトリ配下の全ファイルに再帰的にマッチする。
+			// （以前はファイル 0 件を返し、governs グロブが何にもマッチせず越境司法を
+			//  沈黙でスキップする偽陰性を生んでいた。PR #4 残課題2 の修正。）
+			entries, err := os.ReadDir(current)
+			if err != nil {
+				return nil // 握りつぶし
+			}
+			for _, e := range entries {
+				name := e.Name()
+				if strings.HasPrefix(name, ".") {
+					continue // leading-dot を除外
+				}
+				full := filepath.Join(current, name)
+				if e.IsDir() {
+					if err := matchParts(root, full, parts, results); err != nil {
+						return err
+					}
+				} else {
+					rel, _ := filepath.Rel(root, full)
+					*results = append(*results, filepath.ToSlash(rel))
+				}
+			}
+			return nil
+		}
+
+		// 中間 ** は 0 個以上のディレクトリにマッチ
 		// まず 0 個（現在のディレクトリで残りの parts をマッチ）
 		if err := matchParts(root, current, rest, results); err != nil {
 			return err

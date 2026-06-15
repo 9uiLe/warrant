@@ -12,7 +12,7 @@ import (
 func Main(args []string) int {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "usage: warrant <command> [options]")
-		fmt.Fprintln(os.Stderr, "commands: check, report, serve, init, advise")
+		fmt.Fprintln(os.Stderr, "commands: check, report, serve, init, advise, ratify")
 		return 2
 	}
 
@@ -27,6 +27,8 @@ func Main(args []string) int {
 		return runInit(args[1:])
 	case "advise":
 		return runAdvise(args[1:])
+	case "ratify":
+		return runRatify(args[1:])
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command: %s\n", args[0])
 		return 2
