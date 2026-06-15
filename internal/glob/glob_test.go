@@ -1,3 +1,4 @@
+// @warrant-covers WARRANT-GLOB
 package glob
 
 import (

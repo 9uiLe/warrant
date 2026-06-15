@@ -1,0 +1,18 @@
+# warrant 自身の統治ゲート設定（ドッグフーディング）
+# 詳細は .warrant/README.md を参照
+
+spec_root: "docs/spec"
+test_globs:
+  - "**/*_test.go"
+
+# タグは既定の @covers ではなく @warrant-covers を使う。
+# 理由: internal/check/check_test.go のテストフィクスチャ文字列に
+# `@covers FEAT-001` / `@covers UNKNOWN-999` がリテラルで含まれており、
+# 既定タグでスキャンすると未宣言 ID として E-TAG-ORPHAN を誤検出するため。
+tag: "@warrant-covers"
+
+id_pattern: "[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+"
+derived_globs:
+  - "*.generated.*"
+  - ".warrant/*.generated.*"
+report_path: ".warrant/traceability.generated.md"

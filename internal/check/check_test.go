@@ -1,3 +1,4 @@
+// @warrant-covers WARRANT-CHECK
 package check
 
 import (
