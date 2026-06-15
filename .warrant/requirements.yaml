@@ -66,6 +66,7 @@ requirements:
     tests:
       - "internal/semantic/semantic_test.go"
       - "internal/cli/advise_test.go"
+      - "examples/semantic-judge/main_test.go"
 
   - id: WARRANT-RATIFY
     title: "承認補助（ratify コマンド）"

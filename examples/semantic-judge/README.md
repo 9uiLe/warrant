@@ -8,6 +8,8 @@
 - ローカル開発・CI での `warrant advise` の結合テスト
 - 置換性のデモ: 標準ライブラリのみで第三者が再実装できることを示す
 
+このスタブは置換性のデモのため `internal/semantic` の型を意図的に複製している。`main_test.go` の契約テスト(`WARRANT-ADVISE` のカバレッジ)が、複製した struct と本体 `internal/semantic.Request`/`Verdict` の JSON フィールドが双方向で一致することを検証する。契約がドリフトした瞬間に `go test ./...` が失敗するため、参照実装が腐らない。
+
 ## JSON 契約
 
 ### Request (stdin)

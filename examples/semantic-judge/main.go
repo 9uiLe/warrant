@@ -28,6 +28,21 @@ type verdict struct {
 	ProposedAssertion string `json:"proposed_assertion,omitempty"`
 }
 
+// decideVerdict は Request から決定論的に Verdict を返す参照スタブの中核。
+// LLM は呼ばず、常に uncertain を返して受信内容を rationale に echo する。
+func decideVerdict(req request) verdict {
+	rationale := fmt.Sprintf(
+		"[参照スタブ] rule_id=%q criterion=%q targets件数=%d — "+
+			"これは参照スタブであり実際の意味判定はしていない。実運用では LLM 等に置き換えること。",
+		req.RuleID, req.Criterion, len(req.Targets),
+	)
+	return verdict{
+		Verdict:           "uncertain",
+		Rationale:         rationale,
+		ProposedAssertion: "",
+	}
+}
+
 func main() {
 	raw, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -41,21 +56,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	rationale := fmt.Sprintf(
-		"[参照スタブ] rule_id=%q criterion=%q targets件数=%d — "+
-			"これは参照スタブであり実際の意味判定はしていない。実運用では LLM 等に置き換えること。",
-		req.RuleID, req.Criterion, len(req.Targets),
-	)
-
-	v := verdict{
-		Verdict:           "uncertain",
-		Rationale:         rationale,
-		ProposedAssertion: "",
-	}
-
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetEscapeHTML(false)
-	if err := enc.Encode(v); err != nil {
+	if err := enc.Encode(decideVerdict(req)); err != nil {
 		fmt.Fprintf(os.Stderr, "Verdict JSON エンコード失敗: %v\n", err)
 		os.Exit(1)
 	}
