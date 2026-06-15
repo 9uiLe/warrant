@@ -20,3 +20,30 @@ requirements:
       section: "## マッチング規則"
     tests:
       - "internal/glob/glob_test.go"
+
+  - id: WARRANT-INIT
+    title: "雛形生成（init コマンド）"
+    status: active
+    spec:
+      doc: "docs/spec/init.md"
+      section: "## 不変条件"
+    tests:
+      - "internal/cli/init_test.go"
+
+  - id: WARRANT-REPORT
+    title: "派生レポート生成（report コマンド）"
+    status: active
+    spec:
+      doc: "docs/spec/report.md"
+      section: "## 不変条件"
+    tests:
+      - "internal/report/report_test.go"
+
+  - id: WARRANT-SERVE
+    title: "可視化サーバ（serve コマンド）"
+    status: active
+    spec:
+      doc: "docs/spec/serve.md"
+      section: "## 不変条件（安全性）"
+    tests:
+      - "internal/serve/serve_test.go"
