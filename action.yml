@@ -1,0 +1,43 @@
+name: warrant
+description: >
+  warrant トレーサビリティゲートを実行する composite action。
+  install.sh でバイナリをインストールし、指定したサブコマンドを実行する。
+  注意: このリポジトリが public の場合にのみ動作する。
+
+inputs:
+  version:
+    description: "インストールするバージョン（空または 'latest' で最新リリース）"
+    required: false
+    default: ""
+  args:
+    description: "warrant に渡すサブコマンドと引数"
+    required: false
+    default: "check"
+  working-directory:
+    description: "warrant を実行するディレクトリ"
+    required: false
+    default: "."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install warrant
+      shell: sh
+      env:
+        WARRANT_VERSION: ${{ inputs.version }}
+      run: |
+        # install.sh を raw URL からダウンロードして実行する
+        # チェックアウト不要; バージョンは環境変数で渡す
+        curl -fsSL \
+          "https://raw.githubusercontent.com/9uiLe/warrant/master/install.sh" \
+          | sh
+
+    - name: Add install dir to PATH
+      shell: sh
+      run: |
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+    - name: Run warrant
+      shell: sh
+      working-directory: ${{ inputs.working-directory }}
+      run: warrant ${{ inputs.args }}
