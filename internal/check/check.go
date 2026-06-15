@@ -16,14 +16,22 @@ import (
 	"github.com/9uiLe/warrant/internal/scan"
 )
 
+// TestRef はテストファイルの参照とリンク状態
+type TestRef struct {
+	File   string
+	Linked bool
+}
+
 // Requirement は正規化された要件
 type Requirement struct {
-	ID      string
-	Title   string
-	Status  string
-	SpecDoc string
-	SpecSec string
-	Tests   []string
+	ID       string
+	Title    string
+	Status   string
+	SpecDoc  string
+	SpecSec  string
+	Tests    []string
+	SpecOK   bool
+	TestRefs []TestRef
 }
 
 // Result はチェック結果
@@ -182,6 +190,7 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 		}
 
 		var testFiles []string
+		var testRefs []TestRef
 		for _, t := range testsList {
 			var tfile string
 			switch v := t.(type) {
@@ -201,7 +210,13 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 			// projection 用に宣言された全テストファイルを保持（Python の report と同様、
 			// 実在しないテストも一覧に含める）。
 			testFiles = append(testFiles, tfile)
-			if !isFile(filepath.Join(root, tfile)) {
+			fileExists := isFile(filepath.Join(root, tfile))
+			tfileSlash := filepath.ToSlash(tfile)
+			_, hasTag := tagIndex[rid][tfileSlash]
+			// TestRef は continue 前に追加する（ファイルが実在しない場合でも全テストファイルを収集し、
+			// linked 判定はファイル実在かつタグあり の両方が必要）。
+			testRefs = append(testRefs, TestRef{File: tfile, Linked: fileExists && hasTag})
+			if !fileExists {
 				violations = append(violations, projection.Violation{
 					Code:        "E-TEST-NOFILE",
 					Requirement: rid,
@@ -209,8 +224,7 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 				})
 				continue
 			}
-			tfileSlash := filepath.ToSlash(tfile)
-			if _, hasTag := tagIndex[rid][tfileSlash]; !hasTag {
+			if !hasTag {
 				violations = append(violations, projection.Violation{
 					Code:        "E-TAG-MISSING",
 					Requirement: rid,
@@ -219,13 +233,17 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 			}
 		}
 
+		specOK := specDoc != "" && isFile(filepath.Join(root, specDoc)) && !derivedMatch(specDoc, cfg.DerivedGlobs)
+
 		requirements = append(requirements, Requirement{
-			ID:      rid,
-			Title:   title,
-			Status:  status,
-			SpecDoc: specDoc,
-			SpecSec: specSec,
-			Tests:   testFiles,
+			ID:       rid,
+			Title:    title,
+			Status:   status,
+			SpecDoc:  specDoc,
+			SpecSec:  specSec,
+			Tests:    testFiles,
+			SpecOK:   specOK,
+			TestRefs: testRefs,
 		})
 	}
 

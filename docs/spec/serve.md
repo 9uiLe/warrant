@@ -1,6 +1,6 @@
 # 仕様: 可視化サーバ（serve コマンド）
 
-`warrant serve` は、トレーサビリティグラフをブラウザで閲覧するためのローカル HTTP サーバを起動する。`internal/cli/serve.go`、`internal/serve`、`internal/web` が実装の中核である。
+`warrant serve` は、トレーサビリティレポートをブラウザで閲覧するためのローカル HTTP サーバを起動する。`internal/cli/serve.go`、`internal/serve`、`internal/web` が実装の中核である。
 
 ## 入力
 
@@ -17,16 +17,17 @@
 
 | メソッド・パス | 応答 |
 |---|---|
-| `GET /` | 埋め込み（`go:embed`）された `index.html`（可視化 UI） |
+| `GET /` | リクエスト都度 SSOT から再計算し、`go:embed` した html/template でサーバサイド描画した HTML レポート |
 | `GET /api/graph` | SSOT から再計算したトレーサビリティグラフの JSON |
 
-- `/api/graph` はリクエストの**都度** `check.Run` を実行し、`check.BuildGraph` でグラフ（`verdict` / `requirement_count` / `violations` / `nodes` / `edges` / `generated_at`）を構築して返す。キャッシュは持たない。
+- `GET /` はリクエストの**都度** `check.Run` を実行し、`check.BuildReport` でレポートを構築後、`go:embed` した `report.tmpl.html` テンプレートによりサーバサイド描画した HTML を返す。状態を持たず毎回再計算する。
+- `/api/graph` はリクエストの**都度** `check.Run` を実行し、`check.BuildGraph` でグラフを構築して返す。キャッシュは持たない。
 
 ## 不変条件（安全性）
 
 - **127.0.0.1 に固定**してリッスンする（`127.0.0.1:<port>`）。外部インターフェースには公開しない。
 - **読み取り専用**。GET 以外のメソッドには `405 Method Not Allowed` を返す。ファイルへの書き込み経路や状態変更エンドポイントを持たない。
-- 提供データは毎回 SSOT から再計算するため、サーバ内に可変状態を保持しない。
+- 提供データは毎回 SSOT から再計算するため、サーバ内に可変状態を保持しない。`GET /` のサーバサイド描画も同様に状態を持たず、リクエストごとに SSOT を読み直す。
 
 ## exit コード
 

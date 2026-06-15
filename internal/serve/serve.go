@@ -8,6 +8,7 @@ import (
 
 	"github.com/9uiLe/warrant/internal/check"
 	"github.com/9uiLe/warrant/internal/config"
+	"github.com/9uiLe/warrant/internal/gitmeta"
 	"github.com/9uiLe/warrant/internal/registry"
 	"github.com/9uiLe/warrant/internal/web"
 )
@@ -22,14 +23,32 @@ func Start(addr, root string, reg *registry.Registry, cfg *config.Config) error 
 func Handler(root string, reg *registry.Registry, cfg *config.Config) http.Handler {
 	mux := http.NewServeMux()
 
-	// GET / → index.html (go:embed)
+	// GET / → SSOT から再計算し html/template でサーバサイド描画
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}
+
+		result, err := check.Run(root, reg, cfg)
+		if err != nil {
+			http.Error(w, "internal error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		meta := gitmeta.GitMeta(root)
+		meta.GeneratedAt = time.Now().UTC().Format(time.RFC3339)
+
+		rep := check.BuildReport(result.Requirements, result.Violations, meta, meta.GeneratedAt)
+
+		var buf bytes.Buffer
+		if err := web.Template.Execute(&buf, rep); err != nil {
+			http.Error(w, "template error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write(web.IndexHTML)
+		w.Write(buf.Bytes())
 	})
 
 	// GET /api/graph → その都度 SSOT から再計算
