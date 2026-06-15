@@ -1,0 +1,22 @@
+# 要件登録簿 (SSOT) — warrant 自身の統治対象
+# このファイルが判断の唯一の正本です。
+# 派生データ（*.generated.*）を spec.doc に指定すると E-SPEC-DERIVED で失敗します。
+
+requirements:
+  - id: WARRANT-CHECK
+    title: "トレーサビリティ司法ゲート（check コマンド）"
+    status: active
+    spec:
+      doc: "docs/spec/check.md"
+      section: "## 違反コード一覧"
+    tests:
+      - "internal/check/check_test.go"
+
+  - id: WARRANT-GLOB
+    title: "fnmatch 互換のパスマッチング（glob）"
+    status: active
+    spec:
+      doc: "docs/spec/glob.md"
+      section: "## マッチング規則"
+    tests:
+      - "internal/glob/glob_test.go"
