@@ -30,10 +30,10 @@ func runInit(args []string) int {
 
 	// テンプレートファイルを展開（既存は上書きしない）
 	files := map[string]string{
-		"config.yaml":               configYAMLTemplate,
-		"requirements.yaml":         requirementsYAMLTemplate,
-		"requirements.schema.json":  requirementsSchemaTemplate,
-		"README.md":                 warrantReadmeTemplate,
+		"config.yaml":              configYAMLTemplate,
+		"requirements.yaml":        requirementsYAMLTemplate,
+		"requirements.schema.json": requirementsSchemaTemplate,
+		"README.md":                warrantReadmeTemplate,
 	}
 
 	for name, content := range files {

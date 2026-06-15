@@ -181,6 +181,19 @@ warrant init --repo-root path/to/project   # 既定: カレントディレクト
 | `requirements.schema.json` | requirements.yaml のスキーマ（参考） |
 | `README.md` | `.warrant/` の説明 |
 
+### `warrant advise`
+
+`kind: semantic` の `enforced_by` エントリを持つルールに対して、外部 Judge コマンドを呼び出し意味的評価を **advisory** として提供する。**CI ゲートではなく、常に exit 0 で終了する。**
+
+```sh
+warrant advise                         # semantic_command が未設定なら即終了
+warrant advise --json                  # 機械可読 JSON 出力
+warrant advise --repo-root path/to/project
+warrant advise --rules path/to/rules.yaml
+```
+
+Judge コマンドは `config.yaml` の `semantic_command` で指定する。未設定の場合はスキップして正常終了する。
+
 ## SSOT / 派生分離の不変条件
 
 `spec.doc` には必ず一次情報ソース（人間が書いた仕様書）を指定しなければならない。生成物・ビルド成果物・ツールが出力したファイルを指定してはならない。
@@ -213,3 +226,68 @@ spec:
 | `E-TEST-NOFILE` | `tests` に指定したテストファイルが存在しない |
 | `E-TAG-MISSING` | テストファイルに `@covers <ID>` タグがない（要件側の宣言とテスト側の自己申告が不一致） |
 | `E-TAG-ORPHAN` | テストファイルに `@covers <ID>` タグはあるが、その ID がレジストリに登録されていない |
+
+## Authority 軸（立法）の違反コード
+
+| コード | 意味 |
+|---|---|
+| `E-RULE-SCHEMA` | ルールが mapping でない、または `id` / `title` が欠落している |
+| `E-RULE-ID-FORMAT` | `id` が `id_pattern` に一致しない |
+| `E-RULE-ID-DUP` | `id` がレジストリ内で重複している |
+| `E-RULE-NOBASIS` | `basis` が宣言されていない（立法根拠なし） |
+| `E-RULE-BASIS-NOFILE` | `basis` のファイルが存在しない |
+| `E-RULE-BASIS-NOANCHOR` | `basis` のアンカーが憲法ファイル内に見つからない |
+| `E-RULE-UNENFORCED` | `status: active` のルールに `kind: deterministic` かつ実在・タグ付きの `enforced_by` が 1 件もない |
+| `E-RULE-ENFORCE-SCHEMA` | `enforced_by` 要素の形式が不正 |
+| `E-ENFORCE-NOFILE` | `enforced_by` の `ref` が存在しない |
+| `E-ENFORCE-TAG-MISSING` | チェックファイルに `@warrant-enforces <ID>` タグがない |
+| `E-RULE-UNRATIFIED` | ルール本文の正規ハッシュが承認ハッシュと不一致 |
+| `E-CHECK-ORPHAN` | `@warrant-enforces <ID>` タグの ID がルール登録されていない |
+| `E-CHECK-OUTOFSCOPE` | チェックの `governs` がルールの `scope` 外のファイルを裁いている（越境司法） |
+
+## セマンティックチェック (advisory)
+
+`warrant advise` は LLM などの外部 Judge コマンドを使って `kind: semantic` ルールに対するセマンティック評価を行う。決定論的ゲート（`warrant check`）とは完全に分離されており、advise の結果が CI を落とすことはない。
+
+### config.yaml での設定
+
+```yaml
+# Judge コマンド（未設定なら warrant advise は即終了）
+semantic_command: "claude -p 'あなたはコードレビュアーです...' --output-format json"
+# タイムアウト秒数（既定: 30）
+semantic_timeout_sec: 30
+```
+
+### rules.yaml での semantic エントリ例
+
+```yaml
+rules:
+  - id: RULE-EXAMPLE
+    title: "サンプルルール"
+    status: active
+    basis: ".warrant/constitution.md#example"
+    enforced_by:
+      - kind: deterministic
+        ref: "internal/example_test.go"
+      - kind: semantic
+        ref: "LLM"
+        governs:
+          - "internal/**/*.go"
+        criterion: "関数は単一責任原則に従っているか"
+```
+
+### Judge コマンドの入出力契約
+
+Judge コマンドは stdin で Request JSON を受け取り、stdout に Verdict JSON を出力する。
+
+Request:
+```json
+{"rule_id": "RULE-EXAMPLE", "title": "...", "basis": "...", "criterion": "...", "targets": ["path/to/file.go"]}
+```
+
+Verdict:
+```json
+{"verdict": "pass", "rationale": "理由", "proposed_assertion": "（任意）"}
+```
+
+`verdict` は `"pass"` / `"fail"` / `"uncertain"` のいずれか。advise は常に exit 0 で終了し、verdict の値にかかわらず CI を停止しない。

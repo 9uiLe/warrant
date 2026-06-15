@@ -1,4 +1,5 @@
 // @warrant-covers WARRANT-SERVE
+// @warrant-enforces RULE-SERVE-READONLY
 package serve
 
 import (
