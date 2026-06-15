@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/9uiLe/warrant/internal/authority"
 	"github.com/9uiLe/warrant/internal/check"
 	"github.com/9uiLe/warrant/internal/config"
 	"github.com/9uiLe/warrant/internal/gitmeta"
@@ -66,6 +69,14 @@ func Handler(root string, reg *registry.Registry, cfg *config.Config) http.Handl
 
 		generatedAt := time.Now().UTC().Format(time.RFC3339)
 		graph := check.BuildGraph(result.Requirements, result.Violations, generatedAt)
+
+		rulesFilePath := filepath.Join(root, ".warrant", "rules.yaml")
+		if _, err := os.Stat(rulesFilePath); err == nil {
+			authResult, authErr := authority.Run(root, rulesFilePath, cfg)
+			if authErr == nil && authResult != nil {
+				authority.BuildGraph(&graph, authResult.Rules)
+			}
+		}
 
 		buf := &bytes.Buffer{}
 		enc := json.NewEncoder(buf)

@@ -8,14 +8,14 @@ type Violation struct {
 
 type Node struct {
 	ID    string `json:"id"`
-	Kind  string `json:"kind"` // "requirement" | "spec" | "test"
+	Kind  string `json:"kind"` // "requirement" | "spec" | "test" | "constitution" | "rule" | "check"
 	Label string `json:"label"`
 }
 
 type Edge struct {
 	From string `json:"from"`
 	To   string `json:"to"`
-	Kind string `json:"kind"` // "spec" | "test"
+	Kind string `json:"kind"` // "spec" | "test" | "basis" | "enforces"
 }
 
 type Graph struct {

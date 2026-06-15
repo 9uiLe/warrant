@@ -7,12 +7,15 @@ import (
 )
 
 type Config struct {
-	SpecRoot     string   `yaml:"spec_root"`
-	TestGlobs    []string `yaml:"test_globs"`
-	Tag          string   `yaml:"tag"`
-	IDPattern    string   `yaml:"id_pattern"`
-	DerivedGlobs []string `yaml:"derived_globs"`
-	ReportPath   string   `yaml:"report_path"`
+	SpecRoot           string   `yaml:"spec_root"`
+	TestGlobs          []string `yaml:"test_globs"`
+	Tag                string   `yaml:"tag"`
+	IDPattern          string   `yaml:"id_pattern"`
+	DerivedGlobs       []string `yaml:"derived_globs"`
+	ReportPath         string   `yaml:"report_path"`
+	EnforceTag         string   `yaml:"enforce_tag"`
+	SemanticCommand    string   `yaml:"semantic_command"`
+	SemanticTimeoutSec int      `yaml:"semantic_timeout_sec"`
 }
 
 // Load はファイルを読み込み、無いキーだけ既定で埋める（setdefault 相当）
@@ -54,5 +57,11 @@ func applyDefaults(c *Config) {
 	}
 	if c.ReportPath == "" {
 		c.ReportPath = ".warrant/traceability.generated.md"
+	}
+	if c.EnforceTag == "" {
+		c.EnforceTag = "@warrant-enforces"
+	}
+	if c.SemanticTimeoutSec == 0 {
+		c.SemanticTimeoutSec = 30
 	}
 }

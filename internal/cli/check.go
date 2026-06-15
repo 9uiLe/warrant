@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/9uiLe/warrant/internal/authority"
 	"github.com/9uiLe/warrant/internal/check"
 	"github.com/9uiLe/warrant/internal/config"
 	"github.com/9uiLe/warrant/internal/registry"
@@ -15,11 +16,12 @@ import (
 
 func runCheck(args []string) int {
 	fs := flag.NewFlagSet("check", flag.ContinueOnError)
-	var root, cfgPath, regPath string
+	var root, cfgPath, regPath, rulesPath string
 	var jsonOut bool
 	fs.StringVar(&root, "repo-root", ".", "repo root directory")
 	fs.StringVar(&cfgPath, "config", "", "config file path")
 	fs.StringVar(&regPath, "registry", "", "registry file path")
+	fs.StringVar(&rulesPath, "rules", "", "rules file path")
 	fs.BoolVar(&jsonOut, "json", false, "output as JSON")
 	if err := fs.Parse(args); err != nil {
 		fmt.Fprintln(os.Stderr, "実行エラー:", err)
@@ -36,6 +38,9 @@ func runCheck(args []string) int {
 	}
 	if regPath == "" {
 		regPath = filepath.Join(absRoot, ".warrant", "requirements.yaml")
+	}
+	if rulesPath == "" {
+		rulesPath = filepath.Join(absRoot, ".warrant", "rules.yaml")
 	}
 
 	cfg, err := loadConfig(cfgPath)
@@ -59,10 +64,22 @@ func runCheck(args []string) int {
 	n := len(result.Requirements)
 	vs := result.Violations
 
+	authResult, err := runAuthorityCheck(absRoot, rulesPath, cfg)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "実行エラー:", err)
+		return 2
+	}
+	rulesCount := 0
+	if authResult != nil {
+		vs = append(vs, authResult.Violations...)
+		rulesCount = len(authResult.Rules)
+	}
+
 	if jsonOut {
 		type checkJSONOut struct {
 			OK           bool          `json:"ok"`
 			Requirements int           `json:"requirements"`
+			Rules        int           `json:"rules"`
 			Violations   []interface{} `json:"violations"`
 		}
 		viols := make([]interface{}, len(vs))
@@ -72,6 +89,7 @@ func runCheck(args []string) int {
 		out := checkJSONOut{
 			OK:           len(vs) == 0,
 			Requirements: n,
+			Rules:        rulesCount,
 			Violations:   viols,
 		}
 		buf := &bytes.Buffer{}
@@ -98,6 +116,13 @@ func runCheck(args []string) int {
 		return 1
 	}
 	return 0
+}
+
+func runAuthorityCheck(root, rulesPath string, cfg *config.Config) (*authority.Result, error) {
+	if _, err := os.Stat(rulesPath); os.IsNotExist(err) {
+		return nil, nil
+	}
+	return authority.Run(root, rulesPath, cfg)
 }
 
 func loadConfig(cfgPath string) (*config.Config, error) {

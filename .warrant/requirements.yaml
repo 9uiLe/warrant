@@ -47,3 +47,22 @@ requirements:
       section: "## 不変条件（安全性）"
     tests:
       - "internal/serve/serve_test.go"
+
+  - id: WARRANT-AUTHORITY
+    title: "Authority Provenance Graph（立法軸チェック）"
+    status: active
+    spec:
+      doc: "docs/spec/authority.md"
+      section: "## 違反コード一覧"
+    tests:
+      - "internal/authority/authority_test.go"
+
+  - id: WARRANT-ADVISE
+    title: "セマンティック advisory（advise コマンド）"
+    status: active
+    spec:
+      doc: "docs/spec/advise.md"
+      section: "## 不変条件"
+    tests:
+      - "internal/semantic/semantic_test.go"
+      - "internal/cli/advise_test.go"

@@ -16,3 +16,7 @@ derived_globs:
   - "*.generated.*"
   - ".warrant/*.generated.*"
 report_path: ".warrant/traceability.generated.md"
+
+# セマンティック advisory (warrant advise) の設定
+# semantic_command: "claude -p '...' --output-format json"  # Judge コマンド（未設定なら advise はスキップ）
+# semantic_timeout_sec: 30  # タイムアウト秒数（既定: 30）

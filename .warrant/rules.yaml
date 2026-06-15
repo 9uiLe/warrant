@@ -1,0 +1,25 @@
+rules:
+  - id: RULE-DETERMINISTIC-GATE
+    title: "ゲート経路に非決定的判定を入れない"
+    status: active
+    basis: ".warrant/constitution.md#determinism"
+    enforced_by:
+      - kind: deterministic
+        ref: "internal/authority/determinism_test.go"
+    ratification:
+      approved_by: "tatsuya.kobayashi"
+      content_hash: "sha256:ca42a6017241b0021a4bf8041eed9a23739364efeb1e1045d0bd7ade36ab974e"
+  - id: RULE-SERVE-READONLY
+    title: "serve は読み取り専用で HTTP GET のみを許容する"
+    status: active
+    basis: ".warrant/constitution.md#serve-readonly"
+    scope:
+      - "internal/serve/**"
+    enforced_by:
+      - kind: deterministic
+        ref: "internal/serve/serve_test.go"
+        governs:
+          - "internal/serve/**/*.go"
+    ratification:
+      approved_by: "tatsuya.kobayashi"
+      content_hash: "sha256:d77b199e13407b494287f5dd57b8fa2f9f95af5f61fc406649a688b9a15cc9ba"
