@@ -5,14 +5,35 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
+
+// langPresets は --lang フラグの有効値と対応する test_globs を定義する。
+var langPresets = map[string][]string{
+	"go":      {"**/*_test.go"},
+	"swift":   {"**/*Tests.swift"},
+	"python":  {"**/test_*.py", "**/*_test.py"},
+	"js":      {"**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js"},
+	"generic": {"**/*_test.go", "**/*Tests.swift", "**/test_*.py", "**/*_test.py", "**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js"},
+}
+
+// validLangs は有効なプリセット名を固定順で保持する（エラーメッセージ用）。
+var validLangs = []string{"go", "swift", "python", "js", "generic"}
 
 func runInit(args []string) int {
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 	var root string
+	var lang string
 	fs.StringVar(&root, "repo-root", ".", "repo root directory")
+	fs.StringVar(&lang, "lang", "go", "テスト言語プリセット (go|swift|python|js|generic)")
 	if err := fs.Parse(args); err != nil {
 		fmt.Fprintln(os.Stderr, "実行エラー:", err)
+		return 2
+	}
+
+	// --lang の値を検証する
+	if _, ok := langPresets[lang]; !ok {
+		fmt.Fprintf(os.Stderr, "エラー: 未知の言語プリセット: %s（有効: %s）\n", lang, strings.Join(validLangs, ", "))
 		return 2
 	}
 
@@ -30,12 +51,13 @@ func runInit(args []string) int {
 
 	// テンプレートファイルを展開（既存は上書きしない）
 	files := map[string]string{
-		"config.yaml":              configYAMLTemplate,
+		"config.yaml":              buildConfigYAML(lang),
 		"requirements.yaml":        requirementsYAMLTemplate,
 		"requirements.schema.json": requirementsSchemaTemplate,
 		"README.md":                warrantReadmeTemplate,
 	}
 
+	configCreated := false
 	for name, content := range files {
 		path := filepath.Join(warrantDir, name)
 		if _, err := os.Stat(path); err == nil {
@@ -47,25 +69,50 @@ func runInit(args []string) int {
 			return 2
 		}
 		fmt.Printf("  作成: .warrant/%s\n", name)
+		if name == "config.yaml" {
+			configCreated = true
+		}
+	}
+
+	// config.yaml が新規作成された場合のみヒントを表示する
+	if configCreated {
+		fmt.Printf("ヒント: 選択言語プリセット = %s。テストファイルが test_globs にマッチするか `warrant check` で確認してください。\n", lang)
+		fmt.Println("      他言語へ変える場合は .warrant/config.yaml の test_globs コメント例を参照。")
 	}
 
 	return 0
 }
 
-// テンプレート文字列定数
-const configYAMLTemplate = `# warrant 設定ファイル
+// buildConfigYAML は指定言語プリセットに応じた config.yaml テンプレートを生成する。
+func buildConfigYAML(lang string) string {
+	globs := langPresets[lang]
+
+	// test_globs の有効行を構築する
+	var globLines strings.Builder
+	for _, g := range globs {
+		fmt.Fprintf(&globLines, "  - %q\n", g)
+	}
+
+	return `# warrant 設定ファイル
 # 詳細は .warrant/README.md を参照
 
 spec_root: "docs/spec"
+# テスト走査パターン（選択言語プリセット: ` + lang + `）
+# 他言語に変更する場合は test_globs を以下を参考に書き換えてください:
+#   go     : "**/*_test.go"
+#   swift  : "**/*Tests.swift"
+#   python : "**/test_*.py", "**/*_test.py"
+#   js     : "**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js"
+#   generic: 上記すべてを網羅
 test_globs:
-  - "**/*_test.*"
-tag: "@covers"
+` + globLines.String() + `tag: "@covers"
 id_pattern: "[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+"
 derived_globs:
   - "*.generated.*"
   - ".warrant/*.generated.*"
 report_path: ".warrant/traceability.generated.md"
 `
+}
 
 const requirementsYAMLTemplate = `# 要件登録簿 (SSOT)
 # このファイルが判断の唯一の正本です。

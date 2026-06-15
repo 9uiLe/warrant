@@ -205,14 +205,23 @@ warrant serve --port 7799    # ポート変更（既定: 7777）
 
 ```sh
 warrant init
-warrant init --repo-root path/to/project   # 既定: カレントディレクトリ
+warrant init --repo-root path/to/project       # 既定: カレントディレクトリ
+warrant init --lang go                          # Go プロジェクト（既定）
+warrant init --lang swift                       # Swift プロジェクト
+warrant init --lang python                      # Python プロジェクト
+warrant init --lang js                          # TypeScript / JavaScript プロジェクト
+warrant init --lang generic                     # 複数言語混在プロジェクト
 ```
+
+`--lang` には `go` / `swift` / `python` / `js` / `generic` を指定できる（既定: `go`）。未知の値を指定すると有効値一覧を表示して exit 2 で終了する。
+
+生成される `config.yaml` の `test_globs` は選択プリセットに応じて設定され、他言語への変更例がコメントで自己記述的に併記される。`config.yaml` を新規作成した場合のみ、ヒントメッセージが表示される。
 
 生成されるファイル:
 
 | ファイル | 役割 |
 |---|---|
-| `config.yaml` | ツール設定 |
+| `config.yaml` | ツール設定（`test_globs` が選択言語プリセットで設定される） |
 | `requirements.yaml` | 要件レジストリ（SSOT、サンプル要件入り） |
 | `requirements.schema.json` | requirements.yaml のスキーマ（参考） |
 | `README.md` | `.warrant/` の説明 |
