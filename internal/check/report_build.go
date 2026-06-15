@@ -61,14 +61,12 @@ func BuildReport(reqs []Requirement, vs []projection.Violation, meta projection.
 		}
 
 		rreqs = append(rreqs, projection.ReportRequirement{
-			ID:       req.ID,
-			Title:    req.Title,
-			Status:   req.Status,
-			Priority: req.Priority,
-			Category: req.Category,
-			Verdict:  verdict,
-			Tests:    tests,
-			Spec:     projection.ReportSpec{Doc: req.SpecDoc, Section: req.SpecSec, Status: specStatus},
+			ID:      req.ID,
+			Title:   req.Title,
+			Status:  req.Status,
+			Verdict: verdict,
+			Tests:   tests,
+			Spec:    projection.ReportSpec{Doc: req.SpecDoc, Section: req.SpecSec, Status: specStatus},
 		})
 	}
 

@@ -22,14 +22,12 @@ func TestTemplate_EscapesUserData(t *testing.T) {
 		Summary: projection.ReportSummary{Total: 1, Passed: 1, CoveragePercent: 100},
 		Requirements: []projection.ReportRequirement{
 			{
-				ID:       "XSS-001",
-				Title:    "<script>alert(1)</script>",
-				Status:   "active",
-				Priority: "critical",
-				Category: "</span><img src=x onerror=alert(2)>",
-				Verdict:  "pass",
-				Tests:    []projection.ReportTest{{File: "x_test.go\"><script>1</script>", Status: "linked"}},
-				Spec:     projection.ReportSpec{Doc: "docs/<x>.md", Section: "## <b>", Status: "linked"},
+				ID:      "XSS-001",
+				Title:   "<script>alert(1)</script>",
+				Status:  "active",
+				Verdict: "pass",
+				Tests:   []projection.ReportTest{{File: "x_test.go\"><script>1</script>", Status: "linked"}},
+				Spec:    projection.ReportSpec{Doc: "docs/<x>.md", Section: "</div><img src=x onerror=alert(2)>", Status: "linked"},
 			},
 		},
 	}

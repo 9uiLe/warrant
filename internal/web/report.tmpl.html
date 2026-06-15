@@ -173,8 +173,6 @@ details[open] .chev svg{transform:rotate(90deg)}
             <div class="row-idline">
               <span class="tag {{.Status}}">{{.Status}}</span>
               <span class="row-idtext">{{.ID}}</span>
-              {{if .Priority}}<span class="tag active" style="background:rgba(52,184,122,.14);color:#8effc0">{{.Priority}}</span>{{end}}
-              {{if .Category}}<span class="tag active" style="background:rgba(47,149,214,.14);color:#8ed4ff">{{.Category}}</span>{{end}}
               <span class="tag" style="{{if eq .Verdict "pass"}}background:rgba(52,184,122,.14);color:var(--pass){{else if eq .Verdict "fail"}}background:var(--fail-bg);color:var(--fail){{else}}background:rgba(107,117,135,.15);color:var(--draft){{end}}">{{.Verdict}}</span>
             </div>
             <div class="row-title">{{.Title}}</div>

@@ -6,8 +6,6 @@ requirements:
   - id: WARRANT-CHECK
     title: "トレーサビリティ司法ゲート（check コマンド）"
     status: active
-    priority: critical
-    category: 司法ゲート
     spec:
       doc: "docs/spec/check.md"
       section: "## 違反コード一覧"
@@ -17,8 +15,6 @@ requirements:
   - id: WARRANT-GLOB
     title: "fnmatch 互換のパスマッチング（glob）"
     status: active
-    priority: high
-    category: 基盤
     spec:
       doc: "docs/spec/glob.md"
       section: "## マッチング規則"
@@ -28,8 +24,6 @@ requirements:
   - id: WARRANT-INIT
     title: "雛形生成（init コマンド）"
     status: active
-    priority: medium
-    category: CLI
     spec:
       doc: "docs/spec/init.md"
       section: "## 不変条件"
@@ -39,8 +33,6 @@ requirements:
   - id: WARRANT-REPORT
     title: "派生レポート生成（report コマンド）"
     status: active
-    priority: medium
-    category: 出力
     spec:
       doc: "docs/spec/report.md"
       section: "## 不変条件"
@@ -50,8 +42,6 @@ requirements:
   - id: WARRANT-SERVE
     title: "可視化サーバ（serve コマンド）"
     status: active
-    priority: high
-    category: 可視化
     spec:
       doc: "docs/spec/serve.md"
       section: "## 不変条件（安全性）"

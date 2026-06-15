@@ -30,8 +30,6 @@ type Requirement struct {
 	SpecDoc  string
 	SpecSec  string
 	Tests    []string
-	Priority string
-	Category string
 	SpecOK   bool
 	TestRefs []TestRef
 }
@@ -120,9 +118,6 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 		if status == "" {
 			status = "active"
 		}
-
-		priority, _ := m["priority"].(string)
-		category, _ := m["category"].(string)
 
 		specDoc := ""
 		specSec := ""
@@ -247,8 +242,6 @@ func Run(root string, reg *registry.Registry, cfg *config.Config) (*Result, erro
 			SpecDoc:  specDoc,
 			SpecSec:  specSec,
 			Tests:    testFiles,
-			Priority: priority,
-			Category: category,
 			SpecOK:   specOK,
 			TestRefs: testRefs,
 		})

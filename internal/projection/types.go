@@ -8,7 +8,7 @@ type Violation struct {
 
 type Node struct {
 	ID    string `json:"id"`
-	Kind  string `json:"kind"`  // "requirement" | "spec" | "test"
+	Kind  string `json:"kind"` // "requirement" | "spec" | "test"
 	Label string `json:"label"`
 }
 
@@ -19,7 +19,7 @@ type Edge struct {
 }
 
 type Graph struct {
-	Verdict          string      `json:"verdict"`          // "PASS" | "FAIL"
+	Verdict          string      `json:"verdict"` // "PASS" | "FAIL"
 	RequirementCount int         `json:"requirementCount"`
 	Violations       []Violation `json:"violations"`
 	Nodes            []Node      `json:"nodes"`
@@ -46,14 +46,12 @@ type ReportSummary struct {
 	CoveragePercent int `json:"coveragePercent"`
 }
 type ReportRequirement struct {
-	ID       string       `json:"id"`
-	Title    string       `json:"title"`
-	Status   string       `json:"status"`
-	Priority string       `json:"priority"`
-	Category string       `json:"category"`
-	Verdict  string       `json:"verdict"`
-	Tests    []ReportTest `json:"tests"`
-	Spec     ReportSpec   `json:"spec"`
+	ID      string       `json:"id"`
+	Title   string       `json:"title"`
+	Status  string       `json:"status"`
+	Verdict string       `json:"verdict"`
+	Tests   []ReportTest `json:"tests"`
+	Spec    ReportSpec   `json:"spec"`
 }
 type ReportTest struct {
 	File   string `json:"file"`
