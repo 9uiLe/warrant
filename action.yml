@@ -40,4 +40,9 @@ runs:
     - name: Run warrant
       shell: sh
       working-directory: ${{ inputs.working-directory }}
-      run: warrant ${{ inputs.args }}
+      env:
+        # 入力をスクリプト本文へ直接展開せず環境変数経由で渡す。
+        # ${{ }} の直接展開はパース時にコード注入されうる（スクリプトインジェクション対策）。
+        # $WARRANT_ARGS は IFS による単語分割のみで、値中のメタ文字はコード評価されない。
+        WARRANT_ARGS: ${{ inputs.args }}
+      run: warrant $WARRANT_ARGS
