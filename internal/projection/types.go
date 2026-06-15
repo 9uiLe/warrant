@@ -26,3 +26,41 @@ type Graph struct {
 	Edges            []Edge      `json:"edges"`
 	GeneratedAt      string      `json:"generatedAt"` // RFC3339 UTC
 }
+
+type Report struct {
+	Meta         ReportMeta          `json:"meta"`
+	Summary      ReportSummary       `json:"summary"`
+	Requirements []ReportRequirement `json:"requirements"`
+}
+type ReportMeta struct {
+	GeneratedAt string `json:"generatedAt"`
+	Repository  string `json:"repository"`
+	Branch      string `json:"branch"`
+	Commit      string `json:"commit"`
+}
+type ReportSummary struct {
+	Total           int `json:"total"`
+	Passed          int `json:"passed"`
+	Failed          int `json:"failed"`
+	Draft           int `json:"draft"`
+	CoveragePercent int `json:"coveragePercent"`
+}
+type ReportRequirement struct {
+	ID       string       `json:"id"`
+	Title    string       `json:"title"`
+	Status   string       `json:"status"`
+	Priority string       `json:"priority"`
+	Category string       `json:"category"`
+	Verdict  string       `json:"verdict"`
+	Tests    []ReportTest `json:"tests"`
+	Spec     ReportSpec   `json:"spec"`
+}
+type ReportTest struct {
+	File   string `json:"file"`
+	Status string `json:"status"` // linked|broken
+}
+type ReportSpec struct {
+	Doc     string `json:"doc"`
+	Section string `json:"section"`
+	Status  string `json:"status"` // linked|broken|missing
+}

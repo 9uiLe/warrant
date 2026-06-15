@@ -1,6 +1,12 @@
 package web
 
-import _ "embed"
+import (
+	"embed"
+	"html/template"
+)
 
-//go:embed index.html
-var IndexHTML []byte
+//go:embed report.tmpl.html
+var tmplFS embed.FS
+
+// Template はサーバサイドレンダリング用のテンプレート。
+var Template = template.Must(template.New("report.tmpl.html").Funcs(template.FuncMap{}).ParseFS(tmplFS, "report.tmpl.html"))
