@@ -1,0 +1,17 @@
+# ビルド成果物（`go build` で root に出る単一バイナリ。配布物は CI でビルドする）
+/warrant
+/dist/
+*.exe
+
+# Go のテスト・カバレッジ出力
+*.test
+*.out
+coverage.txt
+
+# warrant 自身の派生データ（判断の根拠にしない・SSOT から再生成可能）
+*.generated.*
+.warrant/*.generated.*
+
+# OS / エディタ
+.DS_Store
+*.swp

@@ -1,0 +1,31 @@
+name: Governance Gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  warrant:
+    name: warrant check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: go mod tidy
+        run: go mod tidy
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build
+        run: CGO_ENABLED=0 go build -o warrant .
+
+      - name: Governance gate (warrant check)
+        run: ./warrant check
