@@ -1,0 +1,108 @@
+/* ============================================================
+   Tables — basic table + comparison marks + recommended row
+   ============================================================ */
+
+.table-wrap {
+  overflow-x: auto;
+  margin: var(--sp-5) 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--fs-sm);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table thead th {
+  text-align: left;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  vertical-align: top;
+  color: var(--color-text);
+}
+
+.table tbody tr:last-child td { border-bottom: 0; }
+
+.table tbody tr:hover td { background: var(--color-bg-subtle); }
+
+/* Cell modifiers */
+.table th.num,
+.table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th.center,
+.table td.center { text-align: center; }
+
+/* ---------- Comparison marks (○ × △ –) ---------- */
+.cmp-mark {
+  --cmp-bg: var(--color-neutral-soft);
+  --cmp-fg: var(--color-text-faint);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  background: var(--cmp-bg);
+  color: var(--cmp-fg);
+}
+
+.cmp-mark::before { content: ""; }
+.cmp-mark--yes::before { content: "○"; }
+.cmp-mark--no::before  { content: "×"; }
+.cmp-mark--mid::before { content: "△"; }
+.cmp-mark--na::before  { content: "–"; }
+
+.cmp-mark--yes {
+  --cmp-bg: var(--color-success-soft);
+  --cmp-fg: var(--color-success);
+}
+
+.cmp-mark--no {
+  --cmp-bg: var(--color-danger-soft);
+  --cmp-fg: var(--color-danger);
+}
+
+.cmp-mark--mid {
+  --cmp-bg: var(--color-warning-soft);
+  --cmp-fg: var(--color-warning);
+}
+
+.cmp-mark--na {
+  --cmp-bg: var(--color-neutral-soft);
+  --cmp-fg: var(--color-text-faint);
+}
+
+/* ---------- Recommended row highlight ---------- */
+.table tr.is-recommended td {
+  background: var(--color-accent-soft);
+  position: relative;
+}
+
+.table tr.is-recommended td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-accent);
+  font-weight: var(--fw-semibold);
+}

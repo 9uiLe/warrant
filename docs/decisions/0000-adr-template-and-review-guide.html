@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ADR-0000 · ADR テンプレートとレビュー観点 — 流し読みを防ぐための型</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+<style>
+  .doc-header { max-width: 1200px; margin: 0 auto; padding: var(--sp-10) var(--sp-8) var(--sp-4); }
+  .doc-header__breadcrumb { display: flex; gap: var(--sp-2); align-items: center; font-size: var(--fs-xs); color: var(--color-text-muted); letter-spacing: var(--tracking-caps); text-transform: uppercase; font-weight: var(--fw-medium); margin-bottom: var(--sp-3); }
+  .doc-header__breadcrumb a { color: inherit; }
+  .doc-header__breadcrumb span { opacity: 0.4; }
+  .doc-header h1 { font-size: var(--fs-3xl); font-weight: var(--fw-semibold); letter-spacing: var(--tracking-tight); line-height: 1.15; margin: 0 0 var(--sp-3); }
+  .doc-header h1 .num { font-family: var(--font-mono); color: var(--color-text-faint); font-weight: var(--fw-medium); margin-right: var(--sp-3); }
+  .doc-header .lead { max-width: none; font-size: var(--fs-lg); line-height: 1.7; }
+  .adr-frontmatter__field--tags { grid-column: 1 / -1; }
+  .adr-frontmatter__field--tags .adr-frontmatter__value { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="doc-header__breadcrumb">
+    <a href="index.html">Engineering Docs</a>
+    <span>/</span>
+    <a href="index.html">ADRs</a>
+    <span>/</span>
+    <span style="opacity:1;color:var(--color-text-secondary)">0000</span>
+  </div>
+  <h1><span class="num">ADR-0000</span>ADR テンプレートとレビュー観点 — 流し読みを防ぐための型</h1>
+  <p class="lead">このリポジトリで ADR を書く理由と、<strong>固定スロット・テンプレート</strong>、そして承認前に流し読みを破るための <strong>レビュー観点チェックリスト</strong> を定める。ねらいは一つ — 「スラスラ読めたから理解した」という錯覚で承認し、後から『なんか違う』となるのを防ぐこと。正本は <strong>Markdown</strong>（<a href="0002-adr-source-format.html">ADR-0002</a>）、人間レビュー用 HTML は <code>tools/adr-gen.mjs</code> で生成する。実例は <a href="0001-local-adr-viewer.html">ADR-0001</a>・<a href="0002-adr-source-format.html">ADR-0002</a>。</p>
+</header>
+
+<div class="doc-shell">
+  <aside class="doc-toc" id="toc">
+    <p class="doc-toc-label">On this page</p>
+  </aside>
+
+  <main class="doc-main prose" id="content">
+
+    <div class="adr-frontmatter">
+      <div class="adr-frontmatter__field">
+        <span class="adr-frontmatter__key">ADR</span>
+        <span class="adr-frontmatter__value mono">0000</span>
+      </div>
+      <div class="adr-frontmatter__field">
+        <span class="adr-frontmatter__key">Status</span>
+        <span class="adr-frontmatter__value"><span class="badge status-accepted">Accepted</span></span>
+      </div>
+      <div class="adr-frontmatter__field">
+        <span class="adr-frontmatter__key">Date</span>
+        <span class="adr-frontmatter__value mono">2026-06-06</span>
+      </div>
+      <div class="adr-frontmatter__field">
+        <span class="adr-frontmatter__key">Deciders</span>
+        <span class="adr-frontmatter__value">@9uiLe</span>
+      </div>
+      <div class="adr-frontmatter__field adr-frontmatter__field--tags">
+        <span class="adr-frontmatter__key">Tags</span>
+        <span class="adr-frontmatter__value">
+          <span class="badge badge--no-dot">Process</span>
+          <span class="badge badge--no-dot">Template</span>
+          <span class="badge badge--no-dot">Review</span>
+          <span class="badge badge--no-dot">Documentation</span>
+        </span>
+      </div>
+    </div>
+
+<h2 id="why">なぜ「型」なのか</h2>
+
+<p>Markdown の散文は <strong>スラスラ読めてしまう</strong>。この「読みやすさ」を脳は「理解した」と取り違える（<em>処理流暢性 / 説明深度の錯覚</em>）。結果、論理の飛躍・前提の曖昧さ・選択肢比較の甘さを見落としたまま承認し、後から『なんか違う』が起きる。<strong>スラスラ読めること自体がレビューの罠</strong> だった。</p>
+
+<p>これを塞ぐのは保存形式ではなく <strong>型</strong> — 固定スロットと、論拠を強制する欄。そしてそれを <strong>摩擦のある描画</strong>（生成 HTML を viewer で読む）と組み合わせる。形式そのものの議論は <a href="0002-adr-source-format.html">ADR-0002</a> で決着している。</p>
+
+<div class="callout callout--info">
+  <span class="callout-icon">i</span>
+  <div class="callout-body">
+<p class="callout-title">流し読みを防ぐ3つの作用</p>
+<ul>
+<li><strong>構造の明示</strong> — 埋まっていないセクションや薄い論拠が「見えて」しまう。</li>
+<li><strong>読む摩擦</strong> — diff をスキャンで流さず、文書として向き合う。</li>
+<li><strong>知識への紐付け</strong> — リンク・アンカー・表で技術/ドメイン知識に接続できる。</li>
+</ul>
+  </div>
+</div>
+
+<h2 id="template">固定スロット・テンプレート</h2>
+
+<p>すべての ADR は次のスロットを持つ。各スロットは「どの流し読み失敗を塞ぐためにあるか」と対になっている。空にできるが、<strong>空であること自体が論点として見える</strong> のが要点。</p>
+
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr><th>スロット</th><th class="center">書くこと</th><th class="center">塞ぐ失敗</th></tr>
+</thead>
+<tbody>
+<tr><td>Context</td><td class="center">なぜ今この決定が要るか。前提・制約・環境（できれば実測値）。</td><td class="center">「何を決めているか」が曖昧なまま進む。</td></tr>
+<tr><td>Decision Drivers</td><td class="center">判断基準を箇条書き。後段の比較・結論はこの語彙で書く。</td><td class="center">結論の後付け正当化。基準が動いて見える。</td></tr>
+<tr><td>Considered Options</td><td class="center">最低 2 案。各案の長所 <strong>と短所</strong>。採用案にも短所を書く。</td><td class="center">本命だけ厚く書き、対案を藁人形にする。</td></tr>
+<tr><td>比較表</td><td class="center">判断軸 × 各案。採用列のヘッダに <code>[*]</code>。セルは <code>yes</code>/<code>no</code>/<code>mid</code>/<code>na</code>。</td><td class="center">散文で「なんとなく良い」と流す。軸ごとの優劣が曖昧。</td></tr>
+<tr><td>Decision</td><td class="center"><code>&gt; [!SUCCESS]</code> で採用案と理由。Drivers の語彙で根拠を述べる。</td><td class="center">「結局どうするのか」がぼやける。</td></tr>
+<tr><td>Consequences</td><td class="center">Positive / <strong>Negative</strong> / Neutral。採用案の代償を具体的に。</td><td class="center">良い面だけ並べ、代償を直視しない。</td></tr>
+<tr><td>反証（間違いになるとしたら）</td><td class="center"><strong>観測可能なトリガー</strong> つきで、前提が崩れる条件を列挙。</td><td class="center">「状況が変われば見直す」式の空文句で逃げる。</td></tr>
+<tr><td>Compliance &amp; Monitoring</td><td class="center">決定の遵守をどう担保・観測するか（任意）。</td><td class="center">決めただけで運用に落ちない。</td></tr>
+<tr><td>References</td><td class="center">根拠リンク・関連 ADR・規格・コード。</td><td class="center">主張が知識に接続されず宙に浮く。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="falsification">反証スロット — 「この決定が間違いになるとしたら、何が原因か」</h2>
+
+<p>これがこの型の <strong>核心</strong>。承認者は「正しいか？」を確かめにいくと流暢性に負ける。逆に <strong>「どう間違いうるか」</strong> を書かせると、暗黙の前提が露出する。</p>
+
+<div class="callout callout--tip">
+  <span class="callout-icon">★</span>
+  <div class="callout-body">
+<p class="callout-title">良い反証スロットの条件</p>
+<ul>
+<li><strong>暗黙の前提を名指しする</strong>（例: 「人間がローカルのブラウザで読む」前提に立っている）。</li>
+<li>各前提に <strong>観測可能なトリガー</strong> を添える（「〜という要望が複数回出たら」）。漠然とした「状況次第」は不可。</li>
+<li>崩れたときの <strong>代替の方向</strong> を一言で示す（「その時は AsciiDoc を検討」）。</li>
+</ul>
+  </div>
+</div>
+
+<p>実例: <a href="0001-local-adr-viewer.html#falsification">ADR-0001 の反証スロット</a>・<a href="0002-adr-source-format.html#falsification">ADR-0002 の反証スロット</a> — いずれも観測指標つきで「崩れる条件」を並べている。</p>
+
+<h2 id="checklist">レビュー観点チェックリスト</h2>
+
+<p>承認前に、レビュアーは各項目を <strong>反証しにいく</strong>。どれか 1 つでも「言えない／一致しない」なら、まだ承認しない。これが流し読みを破る最後の関門。</p>
+
+<h3 id="check-structure">構造</h3>
+
+<ul>
+<li>固定スロットが <strong>すべて存在</strong> するか。空のスロットは「不要だから空」なのか「埋め忘れ」なのか本文で判別できるか。</li>
+<li>この ADR が <strong>決めている一文</strong> を、Decision を見ずに Context だけから言えるか。</li>
+</ul>
+
+<h3 id="check-logic">論理</h3>
+
+<ul>
+<li>各 Option について「<strong>却下する具体的理由</strong>」を 1 行で言えるか。言えないなら比較が甘い（藁人形になっていないか）。</li>
+<li>Decision の根拠は <strong>Decision Drivers の語彙</strong> で書かれているか。Drivers に無い基準が結論で初登場していないか（後付け）。</li>
+<li>比較表の各セルは <strong>本文の主張と一致</strong> するか。表だけ採用案を良く見せていないか。<code>mid</code>/<code>no</code> の根拠が本文にあるか。</li>
+<li>採用案の <strong>Negative</strong> が具体的に書かれているか。「特になし」は赤信号。</li>
+</ul>
+
+<h3 id="check-assumption">前提と反証</h3>
+
+<ul>
+<li><strong>暗黙の前提</strong> が最低 1 つ明示されているか。反証スロットに <strong>観測可能なトリガー</strong> があるか（「状況が変われば」式の空文句でないか）。</li>
+<li>その前提が <strong>今この瞬間に成り立っている</strong> 確証はあるか（思い込みでないか）。</li>
+</ul>
+
+<h3 id="check-knowledge">知識への接続</h3>
+
+<ul>
+<li>主要な主張に <strong>References / 関連 ADR / 規格 / コード</strong> への接続があるか。宙に浮いた断定がないか。</li>
+<li>影響範囲（他の ADR・既存実装）への <strong>波及</strong> を見落としていないか。</li>
+</ul>
+
+<h3 id="check-fluency">流暢性の罠</h3>
+
+<ul>
+<li>「読みやすくて納得した」だけで通そうとしていないか。<strong>納得の根拠を 1 つ、自分の言葉で再構成</strong> できるか。できないなら、それは理解でなく流暢性。</li>
+</ul>
+
+<h2 id="ops">運用</h2>
+
+<ul>
+<li><strong>執筆</strong>: 正本は <code>adr/NNNN-slug.md</code>（制約付き Markdown、規約は <code>tools/adr-format.md</code>）。</li>
+<li><strong>生成</strong>: <code>node tools/adr-gen.mjs</code> で HTML 生成。<code>node tools/adr-lint.mjs</code> でスロット充足を検査。</li>
+<li><strong>閲覧・承認</strong>: <code>node tools/adr-view.mjs</code> でローカル配信（一覧・ライブリロード付き）。承認は生 diff でなく <strong>viewer の描画</strong> に対して行う（<a href="0002-adr-source-format.html">ADR-0002</a>）。</li>
+<li><strong>採番</strong>: <code>NNNN-kebab-title.md</code>。<code>0000</code> は本ガイド（テンプレート/規約）に予約。</li>
+<li><strong>Status</strong>: <code>proposed</code> / <code>accepted</code> / <code>deprecated</code> / <code>superseded</code> / <code>rejected</code>。</li>
+</ul>
+
+<h2 id="input-needed">このチェックリストを鋭くするために</h2>
+
+<div class="callout callout--warning">
+  <span class="callout-icon">!</span>
+  <div class="callout-body">
+<p class="callout-title">未反映の入力：過去の「なんか違う」実例</p>
+<p>現状のチェックリストは一般原則から組んでいる。<strong>実際に過去に『なんか違う』が起きた具体箇所</strong>（前提漏れ／選択肢比較の甘さ／影響範囲の見落とし 等）を 2〜3 件もらえれば、その失敗を名指しで潰す項目を追加し、このリストを <strong>あなたのチームの失敗パターンに特化</strong> させられる。</p>
+  </div>
+</div>
+
+<h2 id="references">References</h2>
+
+<ul>
+<li><a href="0002-adr-source-format.html">ADR-0002 · ADR の正本形式</a> — 正本 Markdown / 描画レビューの決定。</li>
+<li><a href="0001-local-adr-viewer.html">ADR-0001 · ローカル ADR ビューア</a> — このテンプレートに沿った実例（反証スロットつき）。</li>
+<li><code>tools/adr-format.md</code> — 正本 Markdown の記法仕様。</li>
+<li><code>adr-tooling-handoff.md</code> — 「流暢性の罠」「HTML が効いていた理由」の検討全文。</li>
+<li><a href="https://adr.github.io/madr/">MADR — Markdown Architectural Decision Records</a></li>
+</ul>
+
+    <hr />
+    <p class="muted" style="font-size:var(--fs-sm)">
+      Last updated: <span class="mono">2026-06-06</span> ·
+      Maintainer: <span class="mono">@9uiLe</span>
+    </p>
+  </main>
+</div>
+
+<script src="assets/components.js"></script>
+<script>
+  window.addEventListener('load', function () {
+    DocsADR.initAll({ toc: { container: '#toc', content: '#content', selector: 'h2, h3' } });
+  });
+</script>
+</body>
+</html>

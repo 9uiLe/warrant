@@ -1,0 +1,85 @@
+/* ============================================================
+   Donut Chart — CSS conic-gradient + legend
+   ============================================================ */
+
+.donut-chart {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--sp-6);
+  align-items: center;
+  margin: var(--sp-5) 0;
+  padding: var(--sp-5);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.donut {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(var(--donut-bg, var(--color-bg-inset)) 0 100%);
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  background: var(--color-bg-elevated);
+  border-radius: 50%;
+}
+
+.donut__center {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.donut__center .num {
+  display: block;
+  font-size: 26px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.donut__center .lbl {
+  display: block;
+  font-size: 10px;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+}
+
+/* Legend */
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.donut-legend__item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: var(--sp-2);
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+
+.donut-legend__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-xs);
+}
+
+.donut-legend__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+}

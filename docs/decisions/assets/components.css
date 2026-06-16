@@ -1,0 +1,46 @@
+/* ============================================================
+   tech-docs / Components
+   ------------------------------------------------------------
+   このファイルは個別コンポーネントの集約エントリ。
+   下記の順序で `components/` 配下のスタイルを読み込む。
+
+   このファイルを直接 1 つだけリンクすれば全てのコンポー
+   ネントが使える状態になる。利用例 (HTML):
+
+       <link rel="stylesheet" href="path/to/tokens.css" />
+       <link rel="stylesheet" href="path/to/components.css" />
+
+   依存関係:
+     - tokens.css を先に読み込んでおくこと
+     - フォント (Geist / Noto Sans JP) と Prism / Mermaid は
+       HTML 側で別途読み込む (USAGE.md 参照)
+   ============================================================ */
+
+/* --- Foundation --- */
+@import url("./components/layout.css");
+@import url("./components/typography.css");
+
+/* --- Inline & status indicators --- */
+@import url("./components/badge.css");
+@import url("./components/callout.css");
+
+/* --- Code & tabular content --- */
+@import url("./components/code-block.css");
+@import url("./components/table.css");
+
+/* --- Quantitative visuals --- */
+@import url("./components/metric.css");
+@import url("./components/bar-chart.css");
+@import url("./components/donut-chart.css");
+@import url("./components/line-chart.css");
+@import url("./components/matrix.css");
+@import url("./components/timeline.css");
+
+/* --- Diagrams & structural visuals --- */
+@import url("./components/mermaid.css");
+@import url("./components/decision-tree.css");
+@import url("./components/compare.css");
+
+/* --- ADR-specific & utility classes --- */
+@import url("./components/adr-frontmatter.css");
+@import url("./components/utilities.css");

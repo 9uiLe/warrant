@@ -1,0 +1,109 @@
+/* ============================================================
+   Badge & Status pills
+   ------------------------------------------------------------
+   Variant 切り替えは 3 つの CSS 変数で行う:
+     --badge-bg       背景色
+     --badge-fg       文字色 (兼ドット色)
+     --badge-border   境界色
+   ============================================================ */
+
+.badge {
+  --badge-bg:     var(--color-neutral-soft);
+  --badge-fg:     var(--color-neutral-text);
+  --badge-border: var(--color-neutral-border);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  border: 1px solid var(--badge-border);
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.badge--no-dot::before { display: none; }
+
+/* General-purpose variants */
+.badge--accent {
+  --badge-bg:     var(--color-accent-soft);
+  --badge-fg:     var(--color-accent-text);
+  --badge-border: var(--color-accent-border);
+}
+
+.badge--success {
+  --badge-bg:     var(--color-success-soft);
+  --badge-fg:     var(--color-success-text);
+  --badge-border: var(--color-success-border);
+}
+
+.badge--warning {
+  --badge-bg:     var(--color-warning-soft);
+  --badge-fg:     var(--color-warning-text);
+  --badge-border: var(--color-warning-border);
+}
+
+.badge--danger {
+  --badge-bg:     var(--color-danger-soft);
+  --badge-fg:     var(--color-danger-text);
+  --badge-border: var(--color-danger-border);
+}
+
+.badge--info {
+  --badge-bg:     var(--color-info-soft);
+  --badge-fg:     var(--color-info-text);
+  --badge-border: var(--color-info-border);
+}
+
+.badge--solid {
+  --badge-bg:     var(--color-text);
+  --badge-fg:     var(--color-text-inverse);
+  --badge-border: transparent;
+}
+
+/* ADR-specific status pills */
+.status-proposed {
+  --badge-bg:     var(--color-info-soft);
+  --badge-fg:     var(--color-info-text);
+  --badge-border: var(--color-info-border);
+}
+
+.status-accepted {
+  --badge-bg:     var(--color-success-soft);
+  --badge-fg:     var(--color-success-text);
+  --badge-border: var(--color-success-border);
+}
+
+.status-deprecated {
+  --badge-bg:     var(--color-warning-soft);
+  --badge-fg:     var(--color-warning-text);
+  --badge-border: var(--color-warning-border);
+}
+
+.status-superseded {
+  --badge-bg:     var(--color-neutral-soft);
+  --badge-fg:     var(--color-neutral-text);
+  --badge-border: var(--color-neutral-border);
+}
+
+.status-rejected {
+  --badge-bg:     var(--color-danger-soft);
+  --badge-fg:     var(--color-danger-text);
+  --badge-border: var(--color-danger-border);
+}

@@ -1,0 +1,112 @@
+/* ============================================================
+   Typography — prose, lead, inline marks
+   ============================================================ */
+
+.prose { color: var(--color-text); }
+
+.prose > * + * { margin-top: var(--sp-4); }
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--lh-tight);
+  color: var(--color-text);
+  scroll-margin-top: var(--sp-8);
+}
+
+.prose h1 {
+  font-size: var(--fs-3xl);
+  margin-top: 0;
+}
+
+.prose h2 {
+  font-size: var(--fs-2xl);
+  margin-top: var(--sp-12);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose h3 {
+  font-size: var(--fs-xl);
+  margin-top: var(--sp-10);
+}
+
+.prose h4 {
+  font-size: var(--fs-lg);
+  margin-top: var(--sp-6);
+}
+
+.prose p {
+  margin: var(--sp-4) 0;
+  line-height: var(--lh-base);
+}
+
+.prose ul,
+.prose ol {
+  margin: var(--sp-4) 0;
+  padding-left: var(--sp-6);
+}
+
+.prose li { margin: var(--sp-2) 0; }
+
+.prose li > ul,
+.prose li > ol { margin: var(--sp-2) 0; }
+
+.prose strong {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.prose em { font-style: italic; }
+
+.prose blockquote {
+  margin: var(--sp-6) 0;
+  padding: var(--sp-3) var(--sp-5);
+  border-left: 3px solid var(--color-border-strong);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* Lead paragraph */
+.lead {
+  font-size: var(--fs-lg);
+  line-height: var(--lh-snug);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Inline code */
+.prose code:not(pre code),
+code.inline {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--color-bg-inset);
+  color: var(--color-text);
+  padding: 1.5px 6px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border);
+}
+
+/* Keyboard shortcut */
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Inline highlight */
+mark {
+  background: var(--color-warning-soft);
+  color: var(--color-warning-text);
+  padding: 0 3px;
+  border-radius: var(--radius-xs);
+}

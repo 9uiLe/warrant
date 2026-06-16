@@ -1,0 +1,200 @@
+/* ============================================================
+   Code Block — figure / pre / Prism tokens / diff lines
+   ============================================================ */
+
+.code-block {
+  margin: var(--sp-5) 0;
+  background: var(--code-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  font-family: var(--font-mono);
+  box-shadow: var(--shadow-xs);
+}
+
+.code-block pre {
+  margin: 0;
+  padding: var(--sp-4) var(--sp-5);
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--code-fg);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  tab-size: 2;
+}
+
+.code-block code { font-family: inherit; }
+
+/* ---------- Header (filename / lang / copy) ---------- */
+.code-block__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-4);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.code-block__filename {
+  font-size: var(--fs-xs);
+  color: var(--code-fg);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0;
+}
+
+.code-block__lang {
+  font-size: 10px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--code-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.code-block__spacer { flex: 1; }
+
+.code-block__copy {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  color: var(--code-muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius-xs);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all var(--motion-fast);
+}
+
+.code-block__copy:hover {
+  color: var(--code-fg);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+.code-block__copy.is-copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+/* ---------- Line numbers ---------- */
+.code-block--numbered pre {
+  counter-reset: line;
+  padding-left: 0;
+}
+
+.code-block--numbered .code-line {
+  display: block;
+  counter-increment: line;
+  padding-left: 56px;
+  position: relative;
+}
+
+.code-block--numbered .code-line::before {
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  width: 40px;
+  text-align: right;
+  color: var(--code-comment);
+  padding-right: var(--sp-2);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  user-select: none;
+}
+
+/* ---------- Diff lines (numbered variant) ---------- */
+.code-line--add { background: rgba(110, 231, 183, 0.10); }
+.code-line--del { background: rgba(252, 165, 165, 0.10); }
+.code-line--hl  { background: rgba(196, 181, 253, 0.10); }
+
+.code-line--add::after {
+  content: "+";
+  position: absolute;
+  left: 44px;
+  color: var(--color-success);
+}
+
+.code-line--del::after {
+  content: "−";
+  position: absolute;
+  left: 44px;
+  color: var(--color-danger);
+}
+
+/* ---------- Diff lines (un-numbered fallback) ---------- */
+.code-block:not(.code-block--numbered) .code-line--add,
+.code-block:not(.code-block--numbered) .code-line--del {
+  display: block;
+  padding-left: var(--sp-5);
+  margin-left: calc(var(--sp-5) * -1);
+  margin-right: calc(var(--sp-5) * -1);
+  padding-right: var(--sp-5);
+  position: relative;
+}
+
+.code-block:not(.code-block--numbered) .code-line--add::before {
+  content: "+ ";
+  color: var(--color-success);
+  margin-right: 4px;
+}
+
+.code-block:not(.code-block--numbered) .code-line--del::before {
+  content: "− ";
+  color: var(--color-danger);
+  margin-right: 4px;
+}
+
+.code-block:not(.code-block--numbered) .code-line--add::after,
+.code-block:not(.code-block--numbered) .code-line--del::after {
+  display: none;
+}
+
+/* ---------- Prism-compatible syntax tokens ---------- */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.token.punctuation { color: var(--code-punct); }
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted { color: var(--code-tag); }
+
+.token.boolean,
+.token.number { color: var(--code-number); }
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted { color: var(--code-string); }
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.variable { color: var(--code-operator); }
+
+.token.atrule,
+.token.attr-value,
+.token.keyword { color: var(--code-keyword); }
+
+.token.function,
+.token.class-name { color: var(--code-function); }
+
+.token.regex,
+.token.important { color: var(--code-builtin); }
+
+.token.important,
+.token.bold { font-weight: var(--fw-bold); }
+
+.token.italic { font-style: italic; }
