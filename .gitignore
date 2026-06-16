@@ -12,6 +12,9 @@ coverage.txt
 *.generated.*
 .warrant/*.generated.*
 
+# ADR のレビュー用 HTML（正本は Markdown。`ema gen` で再生成可能な派生物）
+docs/decisions/*.html
+
 # OS / エディタ
 .DS_Store
 *.swp
