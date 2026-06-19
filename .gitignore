@@ -12,6 +12,13 @@ coverage.txt
 *.generated.*
 .warrant/*.generated.*
 
+# ADR のレビュー用 HTML と共有アセット（正本は Markdown。`ema gen` で再生成可能な派生物）
+docs/decisions/*.html
+docs/decisions/assets/
+
+# fusion(マルチエージェント設計レビュー)の作業成果物（派生物・再生成可能）
+ai/fusion/
+
 # OS / エディタ
 .DS_Store
 *.swp

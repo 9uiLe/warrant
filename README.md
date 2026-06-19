@@ -285,7 +285,7 @@ Judge コマンドは `config.yaml` の `semantic_command` で指定する。未
 - (a) `master` への直接 push を禁止し、PR 経由を必須化する
 - (b) マージ前に PR レビュー承認を必須化する
 - (c) "Require review from Code Owners" を有効化する
-- (d) 必須ステータスチェックに `warrant check` を実行する CI を指定する（任意・推奨）
+- (d) 必須ステータスチェックに `warrant check` を実行する CI（`.github/workflows/governance.yml`）を指定する
 
 これにより、`ratify`（ローカルの承認 = content_hash 更新）と CODEOWNERS + ブランチ保護（第二の人間によるレビュー）で承認ループが閉じる。
 
